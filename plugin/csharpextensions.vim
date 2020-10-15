@@ -1,4 +1,4 @@
-function! CE#GenerateClass()
+function! csharpextensions#GenerateClass()
     let file = expand('%:p')
     let topLevelDirectory = fnamemodify(file, ':h') 
     let directory = topLevelDirectory
