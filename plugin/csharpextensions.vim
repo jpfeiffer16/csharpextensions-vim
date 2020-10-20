@@ -17,7 +17,7 @@ function! csharpextensions#GenerateClass()
         let lenDiff = dirLen - csprojFolderLen
         let namespacePath = file[dirLen - lenDiff : dirLen]
         if len(namespacePath) > 1
-            let namespaceString = trim(namespaceString.substitute(namespacePath, '/', '.', 'g'), '.')
+            let namespaceString = trim(namespaceString.substitute(namespacePath, '[/|\\]', '.', 'g'), '.')
         endif
         let classString = fnamemodify(file, ':t:r')
         execute 'normal! iusing System;'
