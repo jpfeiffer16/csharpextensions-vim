@@ -49,7 +49,7 @@ endfunction
 function! csharpextensions#GetResharperDiagnostics() abort
     let slnFile = GetFileType("sln")
     let tempFile = tempname().".xml"
-    execute "!jb inspectcode -o='".tempFile."' ".slnFile
-    cexpr system('dotnet '.s:plugin_path.'/tools/ResharperDiagnosticsConverter/bin/Debug/netcoreapp3.1/ResharperDiagnosticsConverter.dll '.tempFile)
+    execute '!jb inspectcode -o="'.tempFile.'" '.slnFile
+    cexpr system("dotnet ".s:plugin_path."/tools/ResharperDiagnosticsConverter/bin/Debug/netcoreapp3.1/ResharperDiagnosticsConverter.dll ".tempFile)
     copen
 endfunction
