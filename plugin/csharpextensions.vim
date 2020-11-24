@@ -35,12 +35,12 @@ function! GetFileType(fileType) abort
     let filesOfType = []
     while empty(filesOfType)
         let files = globpath(directory, '*', 0, 1)
-        let filesOfType = filter(files, {idx, val -> val =~ (".".a:fileType) })
+        let filesOfType = filter(files, {idx, val -> val =~# a:fileType.'$' })
         let directory = fnamemodify(directory, ':h')
     endwhile
 
     if len(filesOfType) > 1
-        throw "Unable to find one file of type '".fileType."'"
+        throw "Unable to find one file of type '".a:fileType."'"
     endif
 
     return filesOfType[0]
@@ -50,7 +50,6 @@ function! csharpextensions#GetResharperDiagnostics() abort
     let slnFile = GetFileType("sln")
     let tempFile = tempname().".xml"
     execute "!jb inspectcode -o='".tempFile."' ".slnFile
-    " cexpr system('find . -name whatever.txt -printf "%p:1:1:%f\n"')
     cexpr system('dotnet '.s:plugin_path.'/tools/ResharperDiagnosticsConverter/bin/Debug/netcoreapp3.1/ResharperDiagnosticsConverter.dll '.tempFile)
-    " echom 'dotnet '.s:plugin_path.'/tools/ResharperDiagnosticsConverter/bin/Debug/netcoreapp3.1/ResharperDiagnosticsConverter.dll '.tempFile
+    copen
 endfunction

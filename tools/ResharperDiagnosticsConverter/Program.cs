@@ -18,7 +18,6 @@ namespace ResharperDiagnosticsConverter
             var doc = new XmlDocument();
             doc.Load(reportFile);
             var issues = doc.DocumentElement.SelectNodes("//Report/Issues/Project/Issue");
-            Console.WriteLine(issues.Count);
             foreach (XmlNode issue in issues)
             {
                 var file = issue.Attributes.GetNamedItem("File").Value.Replace("\\", "/");
