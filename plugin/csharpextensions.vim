@@ -49,7 +49,38 @@ endfunction
 function! csharpextensions#GetResharperDiagnostics() abort
     let slnFile = GetFileType("sln")
     let tempFile = tempname().".xml"
-    execute '!jb inspectcode -a -o="'.tempFile.'" '.slnFile
-    cexpr system("dotnet ".s:plugin_path."/tools/ResharperDiagnosticsConverter/bin/Debug/netcoreapp3.1/ResharperDiagnosticsConverter.dll ".tempFile)
+    call system('jb inspectcode -a -o="'.tempFile.'" '.slnFile)
+    cexpr system("dotnet ".s:plugin_path."/tools/ResharperDiagnosticsConverter/bin/Debug/netcoreapp3.1/ResharperDiagnosticsConverter.dll quickfix ".tempFile)
     copen
+    let g:resharper_diagnostics = []
+    let highlightResult = system("dotnet ".s:plugin_path."/tools/ResharperDiagnosticsConverter/bin/Debug/netcoreapp3.1/ResharperDiagnosticsConverter.dll highlight ".tempFile)
+    let lines = split(highlightResult, "\n")
+    for line in lines
+        let parts = split(line, ":")
+" {'lnum': 10, 'vcol': 1, 'col': 34, 'filename': 'AngelDoc/DocumentationGenerator.cs', 'end_lnum': 10, 'type': 'E', 'end_col': 34, 'text': 'Invalid token '';'' in class, record, struct, or interface member declaration'}
+        if len(parts) < 6
+            echoerr "Error reading line:"
+            echoerr parts
+        endif
+        call add(g:resharper_diagnostics, {
+            \ "lnum" : parts[1],
+            \ "col" : parts[2],
+            \ "end_lnum" : parts[3],
+            \ "end_col" : parts[4],
+            \ "filename" : parts[0],
+            \ "text" : parts[5],
+            \ "type" : "W"
+        \ })
+    endfor
 endfunction
+
+function! s:ALEWantResults() abort
+  if getbufvar(g:ale_want_results_buffer, '&filetype') ==# 'cs'
+    call ale#sources#csharpextensions#WantResults(g:ale_want_results_buffer)
+  endif
+endfunction
+
+augroup CSharpExtensions_Integrations
+    autocmd!
+    autocmd User ALEWantResults call s:ALEWantResults()
+augroup END
