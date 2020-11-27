@@ -56,7 +56,8 @@ endfunction
 function! s:ResharperInspectDone(output)
     cexpr system("dotnet ".s:plugin_path."/tools/ResharperDiagnosticsConverter/bin/Debug/netcoreapp3.1/ResharperDiagnosticsConverter.dll quickfix ".g:resharper_diagnostics_temp_file)
     copen
-    let g:resharper_diagnostics = []
+    " let g:resharper_diagnostics = []
+    let g:resharper_diagnostics = {}
     let highlightResult = system("dotnet ".s:plugin_path."/tools/ResharperDiagnosticsConverter/bin/Debug/netcoreapp3.1/ResharperDiagnosticsConverter.dll highlight ".g:resharper_diagnostics_temp_file)
     let lines = split(highlightResult, "\n")
     for line in lines
@@ -66,12 +67,16 @@ function! s:ResharperInspectDone(output)
             echoerr "Error reading line:"
             echoerr parts
         endif
-        call add(g:resharper_diagnostics, {
+        let filename = parts[0]
+        if (!has_key(g:resharper_diagnostics, filename))
+            let g:resharper_diagnostics[filename] = []
+        endif
+        call add(g:resharper_diagnostics[filename], {
             \ "lnum" : parts[1],
             \ "col" : parts[2],
             \ "end_lnum" : parts[3],
             \ "end_col" : parts[4],
-            \ "filename" : parts[0],
+            \ "filename" : filename,
             \ "text" : parts[5],
             \ "type" : "W"
         \ })
@@ -80,9 +85,9 @@ function! s:ResharperInspectDone(output)
 endfunction
 
 function! s:ALEWantResults() abort
-  if getbufvar(g:ale_want_results_buffer, '&filetype') ==# 'cs'
+  " if getbufvar(g:ale_want_results_buffer, '&filetype') ==# 'cs'
     call ale#sources#csharpextensions#WantResults(g:ale_want_results_buffer)
-  endif
+  " endif
 endfunction
 
 augroup CSharpExtensions_Integrations
