@@ -39,7 +39,7 @@ namespace ResharperDiagnosticsConverter
                 var converter = new OffsetToLineColumnConverter();
                 foreach (XmlNode issue in issues)
                 {
-                    var file = issue.Attributes.GetNamedItem("File").Value.Replace("\\", "/");
+                    var file = issue.Attributes.GetNamedItem("File").Value;
                     var offsetParts = issue.Attributes.GetNamedItem("Offset").Value.Split('-');
                     var offsetStart = int.Parse(offsetParts[0]);
                     var offsetEnd = int.Parse(offsetParts[1]);

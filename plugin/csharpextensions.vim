@@ -68,6 +68,11 @@ function! s:ResharperInspectDone(output)
             echoerr parts
         endif
         let filename = parts[0]
+        " Resharper will always report files with back-slashes.
+        " If we are on unix, we need to replace them with forward-slashes
+        if has('unix')
+            let filename = substitute(filename, "\\", "/", "g")
+        endif
         if (!has_key(g:resharper_diagnostics, filename))
             let g:resharper_diagnostics[filename] = []
         endif
