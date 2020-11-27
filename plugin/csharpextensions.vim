@@ -48,12 +48,16 @@ endfunction
 
 function! csharpextensions#GetResharperDiagnostics() abort
     let slnFile = GetFileType("sln")
-    let tempFile = tempname().".xml"
-    call system('jb inspectcode -a -o="'.tempFile.'" '.slnFile)
-    cexpr system("dotnet ".s:plugin_path."/tools/ResharperDiagnosticsConverter/bin/Debug/netcoreapp3.1/ResharperDiagnosticsConverter.dll quickfix ".tempFile)
+    let g:resharper_diagnostics_temp_file = tempname().".xml"
+    " call system('jb inspectcode -a -o="'.tempFile.'" '.slnFile)
+    call csharpextensions#proc#RunCommand('jb inspectcode -a -o="'.g:resharper_diagnostics_temp_file.'" '.slnFile, function("s:ResharperInspectDone"))
+endfunction
+
+function! s:ResharperInspectDone(output)
+    cexpr system("dotnet ".s:plugin_path."/tools/ResharperDiagnosticsConverter/bin/Debug/netcoreapp3.1/ResharperDiagnosticsConverter.dll quickfix ".g:resharper_diagnostics_temp_file)
     copen
     let g:resharper_diagnostics = []
-    let highlightResult = system("dotnet ".s:plugin_path."/tools/ResharperDiagnosticsConverter/bin/Debug/netcoreapp3.1/ResharperDiagnosticsConverter.dll highlight ".tempFile)
+    let highlightResult = system("dotnet ".s:plugin_path."/tools/ResharperDiagnosticsConverter/bin/Debug/netcoreapp3.1/ResharperDiagnosticsConverter.dll highlight ".g:resharper_diagnostics_temp_file)
     let lines = split(highlightResult, "\n")
     for line in lines
         let parts = split(line, ":")
@@ -72,6 +76,7 @@ function! csharpextensions#GetResharperDiagnostics() abort
             \ "type" : "W"
         \ })
     endfor
+
 endfunction
 
 function! s:ALEWantResults() abort
