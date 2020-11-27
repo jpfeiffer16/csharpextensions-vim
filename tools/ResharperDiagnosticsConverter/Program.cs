@@ -52,7 +52,7 @@ namespace ResharperDiagnosticsConverter
                         // Remove one from the end column to make it exclusive.
                         endColumn--;
 
-                        Console.WriteLine($"{file}:{line}:{column}:{endLine}:{endColumn}:{message}");
+                        Console.WriteLine($"{file}|{line}|{column}|{endLine}|{endColumn}|{message}");
                     }
                     // Note we are just swallowing file errors here.
                     catch (DirectoryNotFoundException) { }

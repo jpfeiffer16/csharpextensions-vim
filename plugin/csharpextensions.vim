@@ -61,7 +61,7 @@ function! s:ResharperInspectDone(output)
     let highlightResult = system("dotnet ".s:plugin_path."/tools/ResharperDiagnosticsConverter/bin/Debug/netcoreapp3.1/ResharperDiagnosticsConverter.dll highlight ".g:resharper_diagnostics_temp_file)
     let lines = split(highlightResult, "\n")
     for line in lines
-        let parts = split(line, ":")
+        let parts = split(line, "|")
 " {'lnum': 10, 'vcol': 1, 'col': 34, 'filename': 'AngelDoc/DocumentationGenerator.cs', 'end_lnum': 10, 'type': 'E', 'end_col': 34, 'text': 'Invalid token '';'' in class, record, struct, or interface member declaration'}
         if len(parts) < 6
             echoerr "Error reading line:"
