@@ -1,15 +1,33 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.IO.Abstractions;
 
 namespace ResharperDiagnosticsConverter
 {
-    public class OffsetToLineColumnConverter
+    /// <inheritdoc />
+    public class OffsetToLineColumnConverter : IOffsetToLineColumnConverter
     {
-        private Dictionary<string, List<OffsetLineMap>> _fileMappings = new Dictionary<string, List<OffsetLineMap>>();
+        private readonly IFileSystem _fileSystem;
+        private readonly Dictionary<string, List<OffsetLineMap>> _fileMappings =
+            new Dictionary<string, List<OffsetLineMap>>();
 
-        public (int line, int column) GetLineColumn(string filename, int offset)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OffsetToLineColumnConverter"/> class.
+        /// </summary>
+        /// <param name="fileSystem">The file system.</param>
+        public OffsetToLineColumnConverter(IFileSystem fileSystem)
+        {
+            _fileSystem = fileSystem
+                ?? throw new ArgumentNullException(nameof(fileSystem));
+        }
+
+        /// <summary>
+        /// Gets line column.
+        /// </summary>
+        /// <param name="filename">The filename.</param>
+        /// <param name="offset">The offset.</param>
+        public LineColumnPosition GetLineColumn(string filename, int offset)
         {
             if (!_fileMappings.ContainsKey(filename))
             {
@@ -22,12 +40,12 @@ namespace ResharperDiagnosticsConverter
             var lineNumber = _fileMappings[filename].IndexOf(line);
             var column = offset - line.Start;
 
-            return (lineNumber + 1, column + 1); 
+            return new LineColumnPosition(lineNumber + 1, column + 1);
         }
 
         private List<OffsetLineMap> CreateMappings(string filename)
         {
-            var content = File.ReadAllText(filename);
+            var content = _fileSystem.File.ReadAllText(filename);
             var mappings = new List<OffsetLineMap>();
 
             mappings.Add(new OffsetLineMap { Start = 0 });
@@ -42,7 +60,7 @@ namespace ResharperDiagnosticsConverter
                     mappings.Add(new OffsetLineMap { Start = i + 1 });
                 }
             }
-            
+
             if (mappings.LastOrDefault().End == 0)
             {
                 mappings.LastOrDefault().End = i;

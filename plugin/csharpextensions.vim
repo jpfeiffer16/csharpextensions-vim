@@ -54,11 +54,11 @@ function! csharpextensions#GetResharperDiagnostics() abort
 endfunction
 
 function! s:ResharperInspectDone(output)
-    cexpr system("dotnet ".s:plugin_path."/tools/ResharperDiagnosticsConverter/bin/Debug/netcoreapp3.1/ResharperDiagnosticsConverter.dll quickfix ".g:resharper_diagnostics_temp_file)
+    cexpr system("dotnet ".s:plugin_path."/tools/ResharperDiagnosticsConverter/ResharperDiagnosticsConverter/bin/Debug/netcoreapp3.1/ResharperDiagnosticsConverter.dll quickfix ".g:resharper_diagnostics_temp_file)
     copen
     " let g:resharper_diagnostics = []
     let g:resharper_diagnostics = {}
-    let highlightResult = system("dotnet ".s:plugin_path."/tools/ResharperDiagnosticsConverter/bin/Debug/netcoreapp3.1/ResharperDiagnosticsConverter.dll highlight ".g:resharper_diagnostics_temp_file)
+    let highlightResult = system("dotnet ".s:plugin_path."/tools/ResharperDiagnosticsConverter/ResharperDiagnosticsConverter/bin/Debug/netcoreapp3.1/ResharperDiagnosticsConverter.dll highlight ".g:resharper_diagnostics_temp_file)
     let lines = split(highlightResult, "\n")
     for line in lines
         let parts = split(line, "|")
