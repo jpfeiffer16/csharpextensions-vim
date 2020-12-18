@@ -111,7 +111,7 @@ function! csharpextensions#ScratchBuffer() abort
     let s:csxTempFile = tempname().'.csx'
     let s:previewFile = s:csxTempFile.'.txt'
     call writefile([
-                \ '#r "'.substitute(s:plugin_path, '\', '\\').'/tools/CsxExtensions/bin/Debug/netstandard2.0/CsxExtensions.dll"',
+                \ '#r "'.substitute(s:plugin_path, '\', '\\', 'g').'/tools/CsxExtensions/bin/Debug/netstandard2.0/CsxExtensions.dll"',
                 \ '',
                 \ 'using CsxExtensions;',
                 \ ''
