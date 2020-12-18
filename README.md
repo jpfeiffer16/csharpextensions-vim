@@ -7,7 +7,7 @@ The only currently supported installation method is `vim-plug` since this plugin
 to build the included dotnet code.
 
 ```vim
-Plug 'jpfeiffer16/csharpextensions-vim', { 'do':  'dotnet build ./tools/ResharperDiagnosticsConverter' }
+Plug 'jpfeiffer16/csharpextensions-vim', { 'do':  'dotnet build ./tools/tools.sln' }
 ```
 
 ## Commands

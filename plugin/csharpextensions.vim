@@ -95,7 +95,46 @@ function! s:ALEWantResults() abort
   " endif
 endfunction
 
+function! csharpextensions#RunScript(noCache) abort
+    w
+    let command = 'dotnet script '
+    if (a:noCache)
+        let command = command.' --no-cache '
+    endif
+    let command = command.s:csxTempFile
+    let output = split(system(command), '\n')
+    call writefile(output, s:previewFile)
+    execute "pedit ".s:previewFile
+    " call setbufline(s:resultsBuffer, 1, output)
+endfunction
+
+function! csharpextensions#ScratchBuffer() abort
+    let s:csxTempFile = tempname().'.csx'
+    let s:previewFile = s:csxTempFile.'.txt'
+    call writefile([
+                \ '#r "'.s:plugin_path.'/tools/CsxExtensions/bin/Debug/netstandard2.0/CsxExtensions.dll"',
+                \ '',
+                \ 'using CsxExtensions;',
+                \ ''
+                \], s:csxTempFile)
+    execute "tabnew"
+    execute "tcd ".fnamemodify(s:csxTempFile, ':h')
+    execute "edit ".s:csxTempFile
+    " new
+    let s:resultsBuffer = bufnr('%')
+    " silent wincmd p
+    " let command = ":call csharpextensions#RunScript()"
+    nnoremap <buffer> <leader><Enter> :call csharpextensions#RunScript(v:false)<CR>
+    nnoremap <buffer> <leader>\ :call csharpextensions#RunScript(v:true)<CR>
+    normal G
+endfunction
+
 augroup CSharpExtensions_Integrations
     autocmd!
     autocmd User ALEWantResults call s:ALEWantResults()
 augroup END
+
+command! CSECreateClass :call csharpextensions#GenerateClass()<CR>
+command! CSEGetResharperDiagnostics :call csharpextensions#GenerateClass()<CR>
+command! CSEScript :call csharpextensions#ScratchBuffer()
+
