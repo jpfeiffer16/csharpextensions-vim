@@ -107,15 +107,17 @@ function! csharpextensions#RunScript(noCache) abort
     execute "pedit ".s:previewFile
 endfunction
 
-function! csharpextensions#ScratchBuffer() abort
-    let s:csxTempFile = tempname().'.csx'
+function! csharpextensions#ScratchBuffer(fileName) abort
+    let s:csxTempFile = empty(a:fileName) ? tempname().'.csx' : a:fileName
     let s:previewFile = s:csxTempFile.'.txt'
-    call writefile([
-                \ '#r "'.substitute(s:plugin_path, '\\', '\\\\', 'g').'/tools/CsxExtensions/bin/Debug/netstandard2.0/CsxExtensions.dll"',
-                \ '',
-                \ 'using CsxExtensions;',
-                \ ''
-                \], s:csxTempFile)
+    if (empty(a:fileName))
+        call writefile([
+                    \ '#r "'.substitute(s:plugin_path, '\\', '\\\\', 'g').'/tools/CsxExtensions/bin/Debug/netstandard2.0/CsxExtensions.dll"',
+                    \ '',
+                    \ 'using CsxExtensions;',
+                    \ ''
+                    \], s:csxTempFile)
+    endif
     execute "tabnew"
     execute "tcd ".fnamemodify(s:csxTempFile, ':h')
     execute "edit ".s:csxTempFile
@@ -130,7 +132,7 @@ augroup CSharpExtensions_Integrations
     autocmd User ALEWantResults call s:ALEWantResults()
 augroup END
 
-command! CSECreateClass :call csharpextensions#GenerateClass()<CR>
-command! CSEGetResharperDiagnostics :call csharpextensions#GenerateClass()<CR>
-command! CSEScript :call csharpextensions#ScratchBuffer()
+command! CSECreateClass call csharpextensions#GenerateClass()
+command! CSEGetResharperDiagnostics call csharpextensions#GenerateClass()
+command! -bar -complete=file -nargs=? CSEScript call csharpextensions#ScratchBuffer(<q-args>)
 
