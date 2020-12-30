@@ -2,4 +2,23 @@ Test
     Id    : 123
     Stuff : 123
 
+Dictionary<int, string>
+    123, "123"
+
+List<int>
+    1,
+    2,
+    3
+
 1
+
+{Test}
+    Id : 123
+    Name : "Test"
+    Next : {Test}
+        Id : 123,
+        Name : "Test"
+        Next : {Test}
+            Id : 123,
+            Name : "Test"
+            Next : null
