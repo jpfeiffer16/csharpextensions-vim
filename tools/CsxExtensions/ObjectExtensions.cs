@@ -64,9 +64,7 @@ namespace CsxExtensions
         private static System.Reflection.MethodInfo GetGenericDumpMethod(params Type[] genericTypes) =>
             typeof(CsxExtensions.ObjectExtensions).GetMethod("Dump").MakeGenericMethod(genericTypes);
 
-        private static void Indent(int indentLevel)
-        {
+        private static void Indent(int indentLevel) =>
             Console.Write(string.Join(string.Empty, Enumerable.Range(0, indentLevel).Select(n => "  ")));
-        }
     }
 }
