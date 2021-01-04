@@ -6,6 +6,12 @@ namespace CsxExtensions
 {
     public static class ObjectExtensions
     {
+        /// <summary>
+        /// Dumps the value of an object.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="indentLevel">The indent level.</param>
+        /// <typeparam name="T"></typeparam>
         public static void Dump<T>(this T source, int indentLevel = 0)
         {
             var type = typeof(T);

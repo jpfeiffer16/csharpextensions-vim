@@ -124,7 +124,29 @@ function! csharpextensions#ScratchBuffer(fileName) abort
     let s:resultsBuffer = bufnr('%')
     nnoremap <buffer> <leader><Enter> :call csharpextensions#RunScript(v:false)<CR>
     nnoremap <buffer> <leader>\ :call csharpextensions#RunScript(v:true)<CR>
+    " nnoremap <buffer> <leader>= :call ctrlp#init(ctrlp#csharpextensions#findpackages#id())<CR>
+    nnoremap <buffer> <leader>= :call csharpextensions#GetPackages()<CR>
     normal G
+endfunction
+
+function! csharpextensions#GetPackages() abort
+    " FZF:
+    " fzf --bind "change:reload($FZF_DEFAULT_COMMAND {q})" --phony
+    " export FZF_DEFAULT_COMMAND="dotnet bin/Debug/netcoreapp3.1/NugetTools.dll {q}"
+    call inputsave()
+    let inputResult = input("Package Search: ")
+    call inputrestore()
+    " echom inputResult
+    let searchResults = split(system("dotnet ".s:plugin_path."/tools/NugetTools/bin/Debug/netcoreapp3.1/NugetTools.dll ".inputResult), "\n")
+
+    function! PackageSearchDone(package) abort
+        execute 'normal! ggO#r "nuget: '.a:package.'"'
+        OmniSharpRestartServer
+    endfunction
+
+    call ctrlp#csharpextensions#findpackages#set_callback(function('PackageSearchDone'))
+    call ctrlp#csharpextensions#findpackages#set_list(searchResults)
+    call ctrlp#init(ctrlp#csharpextensions#findpackages#id())
 endfunction
 
 augroup CSharpExtensions_Integrations
