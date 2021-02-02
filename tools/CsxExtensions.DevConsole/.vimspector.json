@@ -1,0 +1,13 @@
+{
+    "configurations": {
+        "launch": {
+            "adapter": "netcoredbg",
+             "configuration": {
+                 "request": "launch", 
+                 "program": "/home/jpfeiffer/Source/csharpextensions-vim/tools/CsxExtensions.DevConsole/bin/Debug/netcoreapp3.1/CsxExtensions.dll",
+                 "stopAtEntry": false,
+                 "args": []
+             }
+        }
+    }
+}

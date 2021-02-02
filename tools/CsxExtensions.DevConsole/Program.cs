@@ -24,28 +24,28 @@ namespace CsxExtensions.DevConsole
 
         static void Main(string[] args)
         {
-            // new List<Test>
-            // {
-            //     Test.New(123, "Test", Test.New(124, "Test", Test.New(125, "Test",
-            //         Test.New(126, "Test", Test.New(127, "Test",
-            //             Test.New(128, "Test", Test.New(129, "Test",
-            //                 Test.New(130, "Test", Test.New(131, "Test")))))))))
-            // }.Dump();
-            //
-            // new List<Test>
-            // {
-            //     Test.New(123, "Test"),
-            //     Test.New(123, "Test"),
-            //     Test.New(123, "Test"),
-            //     Test.New(123, "Test"),
-            //     Test.New(123, "Test"),
-            //     Test.New(123, "Test"),
-            //     Test.New(123, "Test"),
-            //     Test.New(123, "Test"),
-            //     Test.New(123, "Test"),
-            // }.Dump();
+            new List<Test>
+            {
+                Test.New(123, "Test", Test.New(124, "Test", Test.New(125, "Test",
+                    Test.New(126, "Test", Test.New(127, "Test",
+                        Test.New(128, "Test", Test.New(129, "Test",
+                            Test.New(130, "Test", Test.New(131, "Test")))))))))
+            }.Dump();
 
-            new Dictionary<int, Test>
+            new List<Test>
+            {
+                Test.New(123, "Test"),
+                Test.New(123, "Test"),
+                Test.New(123, "Test"),
+                Test.New(123, "Test"),
+                Test.New(123, "Test"),
+                Test.New(123, "Test"),
+                Test.New(123, "Test"),
+                Test.New(123, "Test"),
+                Test.New(123, "Test"),
+            }.Dump();
+
+            var dictionary = new Dictionary<int, Test>
             {
                 { 0, Test.New(123, "Test") },
                 { 1, Test.New(123, "Test") },
@@ -54,7 +54,8 @@ namespace CsxExtensions.DevConsole
                 { 4, Test.New(123, "Test") },
                 { 5, Test.New(123, "Test") },
                 { 6, Test.New(123, "Test") },
-            }.Dump();
+            };
+            dictionary.Dump();
         }
     }
 }

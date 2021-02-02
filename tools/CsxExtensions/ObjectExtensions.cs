@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -42,13 +43,31 @@ namespace CsxExtensions
             else
             {
                 // Type is complex
-                if (type.GetInterfaces().Any(i => i.Name.StartsWith("IEnumerable")))
+                if (type.GetInterfaces().Any(i => i.Name.StartsWith("IDictionary")))
+                {
+                    var dictionarySource = source as IDictionary;
+                    var typeArgs = type.GetGenericArguments();
+                    foreach (DictionaryEntry item in dictionarySource)
+                    {
+                        Indent(indentLevel + 1);
+                        Console.Write("Key: ");
+                        GetGenericDumpMethod(typeArgs[0])
+                            .Invoke(null, new object[] { item.Key, indentLevel + 1 });
+                        Console.WriteLine();
+                        Indent(indentLevel + 1);
+                        Console.Write("Value: ");
+                        GetGenericDumpMethod(typeArgs[1])
+                            .Invoke(null, new object[] { item.Value, indentLevel + 1 });
+                    }
+                }
+
+                else if (type.GetInterfaces().Any(i => i.Name.StartsWith("IEnumerable")))
                 {
                     var enumerableSource = source as IEnumerable<object>;
                     foreach (var item in enumerableSource)
                     {
                         Indent(indentLevel + 1);
-                        GetGenericDumpMethod(type.GetGenericArguments())
+                        GetGenericDumpMethod(item.GetType())
                             .Invoke(null, new object[] { item, indentLevel + 1 });
                     }
                 }
@@ -83,10 +102,9 @@ namespace CsxExtensions
             if ((backTickIndex = typeName.IndexOf("`")) > 0)
                 typeName = typeName.Remove(backTickIndex);
 
-            foreach (var genericType in type.GetGenericArguments())
-            {
-                typeName += $"<{GetTypeName(genericType)}>";
-            }
+            typeName += "<";
+            typeName += string.Join(", ", type.GetGenericArguments().Select(ga => GetTypeName(ga)));
+            typeName += ">";
 
             return typeName;
         }
