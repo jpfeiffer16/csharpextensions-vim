@@ -11,38 +11,31 @@ namespace NugetTools
     {
         static async System.Threading.Tasks.Task Main(string[] args)
         {
-            var input = string.Empty;
+            string input;
             if (args.Length > 0)
             {
                 input = args[0];
             }
             else
             {
-                using (var reader = new StreamReader(Console.OpenStandardInput()))
-                {
-                    input = reader.ReadToEnd();
-                }
+                using var reader = new StreamReader(Console.OpenStandardInput());
+                input = await reader.ReadToEndAsync();
             }
             if (string.IsNullOrWhiteSpace(input))
             {
-                // Console.Error.WriteLine("No input provided");
                 Environment.Exit(0);
             }
 
-            // Console.WriteLine(input);
-
-            var cache = new SourceCacheContext();
             var repository = Repository.Factory.GetCoreV3("https://api.nuget.org/v3/index.json");
             var resource = await repository.GetResourceAsync<PackageSearchResource>();
 
+            using var searchTokenSource = new CancellationTokenSource(3000/*30 seconds*/);
             var searchResults = await resource.SearchAsync(
                 input,
-                new SearchFilter(includePrerelease: false), 0, 10, NullLogger.Instance, CancellationToken.None);
+                new SearchFilter(includePrerelease: false), 0, 10, NullLogger.Instance, searchTokenSource.Token);
 
             foreach (var result in searchResults)
             {
-                var lookupResource = await repository.GetResourceAsync<FindPackageByIdResource>();
-                // lookupResource.GetAllVersionsAsync
                 Console.WriteLine("{0}, {1}", result.Identity.Id, result.Identity.Version.ToString());
             }
         }
