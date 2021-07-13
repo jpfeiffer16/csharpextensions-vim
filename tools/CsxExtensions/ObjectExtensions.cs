@@ -8,6 +8,8 @@ namespace CsxExtensions
 {
     public static class ObjectExtensions
     {
+        private static readonly List<object> _seenRefs = new List<object>();
+
         /// <summary>
         /// Dumps the value of an object.
         /// </summary>
@@ -16,6 +18,19 @@ namespace CsxExtensions
         /// <typeparam name="T"></typeparam>
         public static void Dump<T>(this T source, int indentLevel = 0)
         {
+            _seenRefs.Clear();
+            DumpValue(source, indentLevel);
+            Console.WriteLine();
+        }
+
+        [Obsolete("Cannot call method directly")]
+        public static void DumpValue<T>(T source, int indentLevel)
+        {
+            // if (_seenRefs.Find(seenRef => seenRef.Equals(source)) != null)
+            // {
+            //     Console.WriteLine("<Circular Reference>");
+            // }
+
             var type = typeof(T);
             var isPrimitive = !(type.GetProperties().Count() > 0);
             if (type.Name == "String")
@@ -28,6 +43,12 @@ namespace CsxExtensions
             {
                 Console.Write(") ");
                 Console.Write("null");
+                return;
+            }
+
+            if (!isPrimitive && _seenRefs.Contains(source))
+            {
+                Console.WriteLine("<Circular Reference>");
                 return;
             }
 
@@ -85,10 +106,12 @@ namespace CsxExtensions
                     }
                 }
             }
+
+            _seenRefs.Add(source);
         }
 
         private static MethodInfo GetGenericDumpMethod(params Type[] genericTypes) =>
-            typeof(CsxExtensions.ObjectExtensions).GetMethod("Dump").MakeGenericMethod(genericTypes);
+            typeof(CsxExtensions.ObjectExtensions).GetMethod("DumpValue").MakeGenericMethod(genericTypes);
 
         private static void Indent(int indentLevel) =>
             Console.Write(string.Join(string.Empty, Enumerable.Range(0, indentLevel).Select(n => "  ")));

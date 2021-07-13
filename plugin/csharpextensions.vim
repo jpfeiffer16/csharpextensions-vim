@@ -156,6 +156,6 @@ augroup CSharpExtensions_Integrations
 augroup END
 
 command! CSECreateClass call csharpextensions#GenerateClass()
-command! CSEGetResharperDiagnostics call csharpextensions#GenerateClass()
+command! CSEGetResharperDiagnostics call csharpextensions#GetResharperDiagnostics()
 command! -bar -complete=file -nargs=? CSEScript call csharpextensions#ScratchBuffer(<q-args>)
 
