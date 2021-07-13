@@ -24,5 +24,5 @@ Plug 'jpfeiffer16/csharpextensions-vim', { 'do':  'dotnet build ./tools/tools.sl
     - It will drop you in a new csx file so you can play around with a C# concept as you write code.
     - The included dll at the top gives you a pretty basic Linqpad like `.Dump<T>()` extension method that will
         dump the contents of the object you call it on to the bottom split.
-    - Once the window has opened, pressing <leader>= will open a nuget package search dialog and put the selected package into your csx file.
+    - Once the window has opened, pressing `<leader>=` will open a nuget package search dialog and put the selected package into your csx file.
         - This requires the ctrlp plugin at the moment.
