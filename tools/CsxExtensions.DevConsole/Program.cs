@@ -4,6 +4,12 @@ using CsxExtensions;
 
 namespace CsxExtensions.DevConsole
 {
+    struct Test
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
     class Program
     {
         public class Test
@@ -56,6 +62,31 @@ namespace CsxExtensions.DevConsole
                 { 6, Test.New(123, "Test") },
             };
             dictionary.Dump();
+
+            // try
+            // {
+            //     throw new InvalidOperationException("Duhh, this is a test.");
+            // }
+            // catch (Exception e)
+            // {
+            //     e.Dump();
+            // }
+
+            var test = new List<Test>
+            {
+                new Test
+                {
+                    Id = 1,
+                    Name = "Test1"
+                },
+                new Test
+                {
+                    Id = 2,
+                    Name = "Test2"
+                }
+            };
+
+            test.Dump();
         }
     }
 }

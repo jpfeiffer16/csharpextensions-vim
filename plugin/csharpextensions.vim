@@ -141,13 +141,13 @@ function! csharpextensions#GetPackages() abort
 
     function! PackageSearchDone(package) abort
         execute 'normal! ggO#r "nuget: '.a:package.'"'
+        w
         OmniSharpRestartServer
     endfunction
 
     call ctrlp#csharpextensions#findpackages#set_callback(function('PackageSearchDone'))
     call ctrlp#csharpextensions#findpackages#set_list(searchResults)
     call ctrlp#init(ctrlp#csharpextensions#findpackages#id())
-    w
 endfunction
 
 augroup CSharpExtensions_Integrations
